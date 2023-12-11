@@ -1,24 +1,37 @@
 import React from 'react';
-import logo from './logo.svg';
 import './App.css';
+import { facultades } from './api/facultades';
+import { TypeFacultad } from './interfaces/facultad.interface';
+import { CardComponent } from './components';
 
 function App() {
+
+  const [allFacultades, setAllFacultades] = React.useState<TypeFacultad[] | null>(null);
+
+  React.useEffect(()=>{
+    facultades.getAll().then((r) => {setAllFacultades(r.data)}).catch((e) =>{console.error(e)});
+  }, []);
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+        <div>
+        {
+          allFacultades?.length !== 0 ? (
+          <div>
+            {
+              allFacultades?.map((f)=>(
+                <CardComponent 
+                  pk={f.pk}
+                  universidad={f.universidad}
+                  name={f.name}
+                  logo={f.logo}
+                  pub_date={f.pub_date}
+                />
+              ))
+            }
+          </div>):""
+        }
+        </div>
     </div>
   );
 }
